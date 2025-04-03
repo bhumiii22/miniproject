@@ -1,0 +1,66 @@
+{% extends 'quiz_app/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Upload Quiz{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h2>Upload Quiz from Excel</h2>
+            </div>
+            <div class="card-body">
+                <p class="mb-4">Upload an Excel file containing quiz questions. The file should have the following columns:</p>
+                
+                <div class="table-responsive mb-4">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Column Name</th>
+                                <th>Description</th>
+                                <th>Required</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>question_text</td>
+                                <td>The text of the question</td>
+                                <td>Yes</td>
+                            </tr>
+                            <tr>
+                                <td>question_type</td>
+                                <td>Type of question: multiple_choice, true_false, or short_answer</td>
+                                <td>Yes</td>
+                            </tr>
+                            <tr>
+                                <td>points</td>
+                                <td>Number of points for the question</td>
+                                <td>Yes</td>
+                            </tr>
+                            <tr>
+                                <td>choice_1, choice_2, etc.</td>
+                                <td>Text for each choice (for multiple choice questions)</td>
+                                <td>For multiple choice</td>
+                            </tr>
+                            <tr>
+                                <td>is_correct_1, is_correct_2, etc.</td>
+                                <td>Set to TRUE if the choice is correct, FALSE otherwise</td>
+                                <td>For multiple choice</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <form method="post" enctype="multipart/form-data" novalidate>
+                    {% csrf_token %}
+                    {{ form|crispy }}
+                    <div class="d-grid gap-2 mt-3">
+                        <button type="submit" class="btn btn-primary">Upload and Create Quiz</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

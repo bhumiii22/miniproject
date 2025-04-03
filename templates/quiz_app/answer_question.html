@@ -1,0 +1,74 @@
+{% extends 'quiz_app/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Question {{ question.id }}{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Question</h1>
+    <div class="quiz-timer" id="timer"></div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5>{{ question.question_text }}</h5>
+                <span class="badge bg-primary">{{ question.points }} point{{ question.points|pluralize }}</span>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    {% if question.question_type == 'short_answer' %}
+                        {{ form|crispy }}
+                    {% else %}
+                        <div class="list-group">
+                            {% for choice in question.choices.all %}
+                            <label class="list-group-item">
+                                <input type="radio" name="choice" value="{{ choice.id }}" class="form-check-input me-2" 
+                                       {% if answer.selected_choice.id == choice.id %}checked{% endif %}>
+                                {{ choice.choice_text }}
+                            </label>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    
+                    <div class="d-flex justify-content-between mt-4">
+                        <a href="{% url 'take_quiz' question.quiz.id %}" class="btn btn-outline-secondary">Back to Quiz</a>
+                        <button type="submit" class="btn btn-primary">Save Answer</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Set up timer
+        let timeRemaining = {{ time_remaining }};
+        const timerElement = document.getElementById('timer');
+        
+        function updateTimer() {
+            const minutes = Math.floor(timeRemaining / 60);
+            const seconds = timeRemaining % 60;
+            
+            timerElement.textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+            
+            if (timeRemaining <= 0) {
+                clearInterval(timerInterval);
+                alert('Time is up! Your quiz will be submitted automatically.');
+                window.location.href = "{% url 'submit_quiz' attempt.id %}";
+            }
+            
+            timeRemaining--;
+        }
+        
+        updateTimer();
+        const timerInterval = setInterval(updateTimer, 1000);
+    });
+</script>
+{% endblock %}

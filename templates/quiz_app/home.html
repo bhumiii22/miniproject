@@ -1,0 +1,41 @@
+{% extends 'quiz_app/base.html' %}
+
+{% block title %}Quiz App - Home{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 text-center">
+        <h1 class="display-4 mb-4">Welcome to the Quiz Application</h1>
+        <p class="lead">Choose your role to get started:</p>
+        
+        <div class="row mt-5">
+            <div class="col-md-6">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h2 class="card-title">Student</h2>
+                        <p class="card-text">Take quizzes and track your progress</p>
+                        <p class="text-muted small">Requires @gst.sies.edu.in email</p>
+                        <div class="d-grid gap-2">
+                            <a href="{% url 'student_register' %}" class="btn btn-primary">Register as Student</a>
+                            <a href="{% url 'login' %}" class="btn btn-outline-primary">Login as Student</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h2 class="card-title">Teacher</h2>
+                        <p class="card-text">Create quizzes and view student results</p>
+                        <p class="text-muted small">Requires @sies.edu.in email</p>
+                        <div class="d-grid gap-2">
+                            <a href="{% url 'teacher_register' %}" class="btn btn-success">Register as Teacher</a>
+                            <a href="{% url 'login' %}" class="btn btn-outline-success">Login as Teacher</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

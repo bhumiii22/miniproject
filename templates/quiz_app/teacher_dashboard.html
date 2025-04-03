@@ -1,0 +1,72 @@
+{% extends 'quiz_app/base.html' %}
+
+{% block title %}Teacher Dashboard{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Teacher Dashboard</h1>
+
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="d-flex justify-content-end">
+            <a href="{% url 'create_quiz' %}" class="btn btn-primary me-2">Create New Quiz</a>
+            <a href="{% url 'upload_quiz' %}" class="btn btn-success">Upload Quiz from Excel</a>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h2>Your Quizzes</h2>
+    </div>
+    <div class="card-body">
+        {% if quiz_stats %}
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Quiz Title</th>
+                        <th>Time Limit</th>
+                        <th>Created</th>
+                        <th>Attempts</th>
+                        <th>Avg. Score</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for stat in quiz_stats %}
+                    <tr>
+                        <td>{{ stat.quiz.title }}</td>
+                        <td>{{ stat.quiz.time_limit }} minutes</td>
+                        <td>{{ stat.quiz.created_at|date:"M d, Y" }}</td>
+                        <td>{{ stat.attempt_count }}</td>
+                        <td>
+                            {% if stat.attempt_count > 0 %}
+                            <span class="badge bg-{% if stat.avg_score >= 70 %}success{% elif stat.avg_score >= 50 %}warning{% else %}danger{% endif %}">
+                                {{ stat.avg_score|floatformat:1 }}%
+                            </span>
+                            {% else %}
+                            <span class="text-muted">No attempts</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="btn-group">
+                                <a href="{% url 'edit_quiz' stat.quiz.id %}" class="btn btn-sm btn-outline-primary">Edit</a>
+                                <a href="{% url 'view_quiz_attempts' stat.quiz.id %}" class="btn btn-sm btn-outline-info">View Attempts</a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p class="text-muted">You haven't created any quizzes yet.</p>
+        <div class="text-center mt-3">
+            <a href="{% url 'create_quiz' %}" class="btn btn-primary">Create Your First Quiz</a>
+            <span class="mx-2">or</span>
+            <a href="{% url 'upload_quiz' %}" class="btn btn-success">Upload from Excel</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

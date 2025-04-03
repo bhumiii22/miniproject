@@ -1,0 +1,62 @@
+{% extends 'quiz_app/base.html' %}
+
+{% block title %}Student Dashboard{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Student Dashboard</h1>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h2>Available Quizzes</h2>
+            </div>
+            <div class="card-body">
+                {% if available_quizzes %}
+                <div class="list-group">
+                    {% for quiz in available_quizzes %}
+                    <a href="{% url 'take_quiz' quiz.id %}" class="list-group-item list-group-item-action">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h5 class="mb-1">{{ quiz.title }}</h5>
+                            <small>{{ quiz.time_limit }} minutes</small>
+                        </div>
+                        <p class="mb-1">{{ quiz.description }}</p>
+                        <small>Created by: {{ quiz.teacher.username }}</small>
+                    </a>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="text-muted">No quizzes available at the moment.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h2>Completed Quizzes</h2>
+            </div>
+            <div class="card-body">
+                {% if completed_attempts %}
+                <div class="list-group">
+                    {% for attempt in completed_attempts %}
+                    <a href="{% url 'quiz_results' attempt.id %}" class="list-group-item list-group-item-action">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h5 class="mb-1">{{ attempt.quiz.title }}</h5>
+                            <span class="badge bg-{% if attempt.score >= 70 %}success{% elif attempt.score >= 50 %}warning{% else %}danger{% endif %}">
+                                {{ attempt.score|floatformat:1 }}%
+                            </span>
+                        </div>
+                        <p class="mb-1">Completed on: {{ attempt.end_time|date:"F j, Y, g:i a" }}</p>
+                    </a>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="text-muted">You haven't completed any quizzes yet.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

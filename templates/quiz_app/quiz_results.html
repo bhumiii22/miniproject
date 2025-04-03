@@ -1,0 +1,93 @@
+{% extends 'quiz_app/base.html' %}
+
+{% block title %}Quiz Results{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Quiz Results: {{ quiz.title }}</h1>
+    <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary">Back to Dashboard</a>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h2>Summary</h2>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <dl class="row">
+                            <dt class="col-sm-4">Student:</dt>
+                            <dd class="col-sm-8">{{ attempt.student.username }}</dd>
+                            
+                            <dt class="col-sm-4">Quiz:</dt>
+                            <dd class="col-sm-8">{{ attempt.quiz.title }}</dd>
+                            
+                            <dt class="col-sm-4">Started:</dt>
+                            <dd class="col-sm-8">{{ attempt.start_time|date:"F j, Y, g:i a" }}</dd>
+                            
+                            <dt class="col-sm-4">Completed:</dt>
+                            <dd class="col-sm-8">{{ attempt.end_time|date:"F j, Y, g:i a" }}</dd>
+                        </dl>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="text-center">
+                            <h3>Your Score</h3>
+                            <div class="display-1 fw-bold text-{% if attempt.score >= 70 %}success{% elif attempt.score >= 50 %}warning{% else %}danger{% endif %}">
+                                {{ attempt.score|floatformat:1 }}%
+                            </div>
+                            <p class="mt-2">
+                                {% if attempt.score >= 70 %}
+                                    Excellent work!
+                                {% elif attempt.score >= 50 %}
+                                    Good effort!
+                                {% else %}
+                                    Keep practicing!
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h2>Question Details</h2>
+            </div>
+            <div class="card-body">
+                {% for answer in answers %}
+                <div class="card mb-4 {% if answer.is_correct %}border-success{% else %}border-danger{% endif %}">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5>Question {{ forloop.counter }}</h5>
+                        <span class="badge bg-{% if answer.is_correct %}success{% else %}danger{% endif %}">
+                            {% if answer.is_correct %}Correct{% else %}Incorrect{% endif %}
+                        </span>
+                    </div>
+                    <div class="card-body">
+                        <p><strong>{{ answer.question.question_text }}</strong></p>
+                        
+                        {% if answer.question.question_type == 'short_answer' %}
+                            <p><strong>Your Answer:</strong> {{ answer.text_answer }}</p>
+                        {% else %}
+                            <p><strong>Your Answer:</strong> {{ answer.selected_choice.choice_text|default:"No answer provided" }}</p>
+                            
+                            <p><strong>Correct Answer:</strong> 
+                                {% for choice in answer.question.choices.all %}
+                                    {% if choice.is_correct %}{{ choice.choice_text }}{% endif %}
+                                {% endfor %}
+                            </p>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

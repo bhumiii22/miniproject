@@ -1,0 +1,32 @@
+{% extends 'quiz_app/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h2>Login</h2>
+            </div>
+            <div class="card-body">
+                <form method="post" novalidate>
+                    {% csrf_token %}
+                    {{ form|crispy }}
+                    <div class="d-grid gap-2 mt-3">
+                        <button type="submit" class="btn btn-primary">Login</button>
+                    </div>
+                </form>
+                <div class="mt-3 text-center">
+                    <p>Don't have an account?</p>
+                    <div class="btn-group">
+                        <a href="{% url 'student_register' %}" class="btn btn-outline-primary">Register as Student</a>
+                        <a href="{% url 'teacher_register' %}" class="btn btn-outline-success">Register as Teacher</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

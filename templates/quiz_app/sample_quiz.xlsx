@@ -1,0 +1,3 @@
+# This is a placeholder for the Excel file structure
+# You would need to create this file manually with the following columns:
+# question_text, question_type, points, choice_1, is_correct_1, choice_2, is_correct_2, etc.

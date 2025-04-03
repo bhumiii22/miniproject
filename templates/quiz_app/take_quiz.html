@@ -1,0 +1,69 @@
+{% extends 'quiz_app/base.html' %}
+
+{% block title %}Take Quiz: {{ quiz.title }}{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>{{ quiz.title }}</h1>
+    <div class="quiz-timer" id="timer"></div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5>Instructions:</h5>
+                <ul>
+                    <li>You have {{ quiz.time_limit }} minutes to complete this quiz.</li>
+                    <li>Click on a question number below to navigate between questions.</li>
+                    <li>Answered questions will be highlighted in green.</li>
+                    <li>Click "Submit Quiz" when you're finished or when time runs out.</li>
+                </ul>
+                
+                <div class="question-navigation">
+                    {% for question in questions %}
+                    <a href="{% url 'answer_question' attempt.id question.id %}" 
+                       class="question-nav-item {% if question.id in answered_question_ids %}answered{% endif %}">
+                        {{ forloop.counter }}
+                    </a>
+                    {% endfor %}
+                </div>
+                
+                <div class="d-grid gap-2">
+                    <a href="{% url 'submit_quiz' attempt.id %}" class="btn btn-primary" onclick="return confirm('Are you sure you want to submit your quiz? You cannot change your answers after submission.')">
+                        Submit Quiz
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Set up timer
+        let timeRemaining = {{ time_remaining }};
+        const timerElement = document.getElementById('timer');
+        
+        function updateTimer() {
+            const minutes = Math.floor(timeRemaining / 60);
+            const seconds = timeRemaining % 60;
+            
+            timerElement.textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+            
+            if (timeRemaining <= 0) {
+                clearInterval(timerInterval);
+                alert('Time is up! Your quiz will be submitted automatically.');
+                window.location.href = "{% url 'submit_quiz' attempt.id %}";
+            }
+            
+            timeRemaining--;
+        }
+        
+        updateTimer();
+        const timerInterval = setInterval(updateTimer, 1000);
+    });
+</script>
+{% endblock %}

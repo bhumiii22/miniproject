@@ -1,0 +1,63 @@
+{% extends 'quiz_app/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Edit Question{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h2>Edit Question</h2>
+                <a href="{% url 'edit_quiz' question.quiz.id %}" class="btn btn-outline-secondary">Back to Quiz</a>
+            </div>
+            <div class="card-body">
+                <form method="post" novalidate>
+                    {% csrf_token %}
+                    {{ question_form|crispy }}
+                    
+                    <div class="choices-container mt-4">
+                        <h4>Choices</h4>
+                        <p class="text-muted">Edit choices for this question. Mark at least one choice as correct.</p>
+                        {{ choice_formset.management_form }}
+                        
+                        <div id="choices-forms">
+                            {% for choice_form in choice_formset %}
+                            <div class="card mb-3 choice-form">
+                                <div class="card-body">
+                                    {{ choice_form|crispy }}
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    
+                    <div class="d-grid gap-2 mt-3">
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const questionTypeSelect = document.getElementById('id_question_type');
+        const choicesContainer = document.querySelector('.choices-container');
+        
+        function toggleChoicesVisibility() {
+            if (questionTypeSelect.value === 'short_answer') {
+                choicesContainer.style.display = 'none';
+            } else {
+                choicesContainer.style.display = 'block';
+            }
+        }
+        
+        questionTypeSelect.addEventListener('change', toggleChoicesVisibility);
+        toggleChoicesVisibility();
+    });
+</script>
+{% endblock %}
